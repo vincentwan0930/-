@@ -1,0 +1,114 @@
+#include<stdio.h>
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+typedef Node *pLinklist;
+
+/*获取单链表中第i个节点*/
+int GetElem (pLinklist L, int i, int *e) {
+    int j = 1;   /* j为计数器 */
+    pLinklist p = L->next;    /* 定义p指向链表L的第一个结点 */
+    while (p && j < i) {      /* p不为空且计数器j还没有等于i时，循环继续 */
+        p = p->next;
+        ++j;
+    }
+    if (!p || j>i) {
+        return 0;
+    }
+    *e = p->data;             /* 取第i个结点的数据 */
+    return 1;
+}
+
+/*在第i个节点前插入一个节点*/
+int ListInsert(pLinklist *L, int i, int e) {   /* 为啥还要用*L？ */
+    int j = 1;
+    pLinklist p=*L, s;
+    /*寻找第i-1个节点*/
+    while (p && j<i) {      /*循环结束时j = i-1*/
+        p = p->next;
+        ++j;
+    }
+    if (!p || j>i) {
+        return 0;
+    }
+    /*生成新节点*/
+    s = (pLinkList)malloc(sizeof(*pLinklist));
+    s->data = e;
+    s->next = p->next;
+    p->next = s;
+    return 1;
+}
+
+/*删除单链表中第i个节点*/
+int ListDel (pLinklist *L, int i, int *e) {  /*为啥还要用*L？ */
+    int j=1;
+    pLinklist p=*L, q;
+    while (p && j < i) {    /*循环结束时j = i-1,得到第i-1个节点*/
+        p=p->next;
+        ++j;
+    }
+    /* 第i个结点不存在 */
+    if (!(p->next) || j > i) {   /*此处p->next不存在，即第i个节点不存在*/
+        return 0;
+    }
+    q = p->next;       /*q为需要删除的第i个节点*/
+    p->next = q->next;
+    free(q);
+    return 1;
+}
+
+/*头插法生成n节点单链表*/
+void CreatebyHead(pLinklist *L, int n) {
+    pLinklist p;
+    int i;
+    /* 初始化随机数种子 */
+    srand(time(0)) 
+    /*生成单链表*/
+    *L=(pLinklist)malloc(sizeof(*pLinklist));
+    /* 生成头结点 */
+    (*L)->next = NULL;
+    for (i=0; i<n; i++) {
+        /*生成新节点*/
+        p = (pLinkList)malloc(sizeof(Node)); 
+        /* 随机生成1~100的数字 */
+        p->data=rand() % 100 + 1;  /*rand() % 100会生成0~99的数字，%为取余*/
+        p->next=(*L)->next;
+        /*让头节点重新指向第一个节点，即p*/
+        (*L)->next = p; 
+    }
+}
+
+/*尾插法生成n节点单链表*/
+void CreatebyTail (pLinklist *L, int n) {
+    pLinklist p, t;
+    int i;
+    srand(time(0)); 
+    *L=(pLinklist)malloc(sizeof(*pLinklist));
+    /*t为尾节点*/
+    t=*L;
+    for (i=0, i<n; i++) {
+        /*生成新节点*/
+        *L=(pLinklist)malloc(sizeof(*pLinklist));
+        p->data = rand() % 100 + 1;
+        /*将尾节点next指向新节点p*/
+        t->next = p;
+        /*更新t为当前的尾节点p*/
+        t = p;
+    }
+    t->next=NULL;
+}
+
+/* 将L重置为空表 */
+void ClearList(pLinklist *L) {
+    pLinklist p, q;
+    /* p指向第一个结点 */
+    p = (*L)->next;
+    while (p) {
+        q = p->next;  /*先保存下一个要删除的节点*/
+        free(p);
+        p = q;
+    }
+    /*保留空的头节点*/
+    (*L)->next = NULL;
+}
